@@ -521,27 +521,27 @@ window.onload = function () {
 					parameter="&parameter="+this.particle;
 					hm.style.display='block';
 				}else{
-					document.getElementById("legendImg").src = "legend/Capture.png";
+					document.getElementById("legendImg").src = "Capture.png";
 					hm.style.display='none';
 				}
 				
 				if(this.particle === 'pm25'){
-					document.getElementById("legendImg").src = "legend/pm25.png";
+					document.getElementById("legendImg").src = "pm25.png";
 				}
 				else if (this.particle === 'pm10'){
-					document.getElementById("legendImg").src = "legend/pm10.png";
+					document.getElementById("legendImg").src = "pm10.png";
 				}
 				else if (this.particle === 'so2'){
-					document.getElementById("legendImg").src = "legend/so2.png";
+					document.getElementById("legendImg").src = "so2.png";
 				}
 				else if (this.particle === 'no2'){
-					document.getElementById("legendImg").src = "legend/no2.png";
+					document.getElementById("legendImg").src = "no2.png";
 				}
 				else if (this.particle === 'o3'){
-					document.getElementById("legendImg").src = "legend/o3.png";				
+					document.getElementById("legendImg").src = "o3.png";				
 				}
 				else if (this.particle === 'co'){
-					document.getElementById("legendImg").src = "legend/co.png";
+					document.getElementById("legendImg").src = "co.png";
 				}
 				
 				if(tableModes.mode == 'latest') {
