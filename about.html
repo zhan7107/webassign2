@@ -4,25 +4,36 @@
 		<meta charset="uft-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="styles.css"/>
-		<link rel="icon" href="icons\aboutme.png">
 		<title>About</title>
 	</head>
-
 	<body>
 		<ul class="bar">
 			<li><a href="about.html">About</a></li>
 			<li><a href="index.html">Map</a></li>
 		</ul>
-		<h1>About</h1>
-		<p>This is a Air Quality Web App that is interactive, responsive, and allow a user to investigate air quality from various geographical regions.</p>
-		<p>This project will incorporate Vue JS, as our javascript framework.</p>
-		<p>We use Google Map API for our maps and Open AQ Platform for retrieve data for air quality measures.</p>
-		<img src = "Capture.png" alt="Paul Amann"></img>
-		<h2>About Us</h2>
-		<h3>Paul Amann</h3>
-		<img src = "paulimage.jpg" alt="Paul Amann"></img>
-		<p>Paul is a Super-Senior at University of St. Thomas. He is a Computer Science major. He is in Air Force
-		   ROTC AND hopes to be a pilot upon graduation and commissioning. His hobbies include hunting,
-		   cars, motorcycles, and aviation.</p>
+		<div class="about">
+			<h1>About</h1>
+			<p>This is a Air Quality Web App that is interactive, responsive, and allow a user to investigate air quality from various geographical regions.</p>
+			<p>This project will incorporate Vue JS, as our javascript framework.</p>
+			<p>We use Google Map API for our maps and Open AQ Platform for retrieve data for air quality measures.</p>
+			<p>API used are vue2-datepicker for getting the calendar working and axios for getting our promise from Open AQ</p>
+			
+			<h2>About Us</h2>
+			<table>
+				<tr>
+					<td>
+						<h3>Paul Amann</h3>
+						<img src = "paulimage.jpg" height="300px" alt="Paul Amann"></img>
+						<p>Paul is a Super-Senior at University of St. Thomas. He is a Computer Science major. He is in Air Force
+						ROTC AND hopes to be a pilot upon graduation and commissioning. His hobbies include hunting,cars, motorcycles, and aviation.</p>
+					</td>
+				</tr>
+					<td>
+						<h3>Hongli Zhang</h3>
+						<img src = "me.jpg" height="300px" alt="Hongli Zhang"></img>
+						<p>Hongli is a at University of St. Thomas. He is a Computer Science major. His hobbies include cars, fixing computers, playing video games, watch tv and movies</p>
+					</td>
+			</table>
+		</div>
 	</body>
 </html>
