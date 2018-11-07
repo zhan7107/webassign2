@@ -26,6 +26,13 @@ ul.bar li a:hover:not(.active) {
     color: white;
 }
 
+div.about{
+	display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 75%;
+}
+
 
 #map {
 	height:75%;
