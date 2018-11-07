@@ -1,4 +1,0 @@
-Leaflet Coordinates API by MrMufflon
-https://github.com/MrMufflon/Leaflet.Coordinates
-https://github.com/MrMufflon/Leaflet.Coordinates/blob/master/examples/demo.html
-
