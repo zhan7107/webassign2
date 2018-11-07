@@ -1,31 +1,99 @@
 <!DOCTYPE html>
-<html>
+<html v-app="airQualityApp">
 	<head>
-		<title>Simple Map</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta charset="utf-8">
-		<!-- CSS -->
-		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
-		integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
-		crossorigin=""/>
-		<link rel="stylesheet" href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css'/>
-		<link rel="stylesheet" href="css/map.css"/>
-		<link rel="stylesheet" href='http://mrmufflon.github.io/Leaflet.Coordinates/dist/Leaflet.Coordinates-0.1.3.css'/>
-		
-		<!-- Make sure you put this AFTER Leaflet's CSS -->
-		<script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
-		integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
-		crossorigin=""></script>
-		<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
-		<script src='http://mrmufflon.github.io/Leaflet.Coordinates/dist/Leaflet.Coordinates-0.1.3.min.js'></script>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<title>Air Quality Web App</title>
+		<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+		<script src="https://unpkg.com/vue-select@latest"></script>
+		<script src="https://unpkg.com/vue2-datepicker"></script>
+		<link rel="stylesheet" href="styles.css"/>
+		<script src="javascript.js"></script>
 	</head>
 	<body>
+		<ul class="bar">
+			<li><a href="about.html">About</a></li>
+			<li><a href="index.html">Map</a></li>
+		</ul>
+		<h1><i><u>Air Quality Map</i></u></h1>
+		<!--<a id = 'about' href="AboutTheProject.html">About This Project</a>-->
+		<div id="alert" style="display:none">
+			<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+			<strong>Aleart! Unhealthy for Sensitive Groups:</strong> Some area on the map are Unhealthy for Sensitive Groups people.
+		</div>
+		<div id="alert2" style="display:none">
+			<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+			<strong>Aleart! Unhealthy:</strong> Some area on the map are Unhealthy for people
+		</div>
+		<div id="warning" style="display:none">
+			<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+			<strong>Warning! Very Unhealthy:</strong> Some area on the map are Very Unhealthy for people. Stay HOME.
+		</div>
+		<div id="danger" style="display:none">
+			<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+			<strong>Danger! Hazardous:</strong> Some area on the map are Hazardous for people. STAY HOME!
+		</div>
+		<input id="pac-input" class="controls" type="text" v-model="message" placeholder="Enter a location: ">
+
+		<div>
+			<h4 id='addr'>{{address}}</h4>
+			<h4 id = 'll' >{{lnglat}}</h4>
+		</div>
+		<div id="floating-panel">
+			<button onclick="toggleHeatmap()">Toggle Heatmap</button>
+		</div>
+		<div id="map"></div>
+		<div id="legend">
+			<img id="legendImg" src="legend/Capture.png">
+		</div>
+		<div id="dataTable">
+			<div id = "values">
+				<p>Greater than: <input id="minvalue" type="number" v-model="min"></p>
+				<p>Less than: <input id="maxvalue" type="number" v-model="max"></p>
+			</div>
+			<label>Particle Type:</label>
+			<select id="particles" v-model="particle" @change="onchange()">
+				<option v-for="option in options">{{option.type}}</option>
+			</select>
+
+			<label>Mode:</label>
+			<select id="mapMode" v-model="mode" @change="onchange()">
+				<option v-for="x in historyorlatest">{{x.type}}</option>
+			</select>
+			<div id="dates" style="display:none">
+				<label for="start">From:</label>
+				<date-picker ref="datePicker" v-model="start_from" :value="start_from" lang="en" type="datetime" :clearable="false" :editable="false" :not-before="disabledDates.to" :not-after="end_to" format="MM-DD-YYYY[T]HH:mm:ss"></date-picker>
+				<label for="end">To:</label>
+				<date-picker ref="datePicker" v-model="end_to" :value="end_to"  lang="en" type="datetime" :clearable="false" :editable="false" :not-before="start_from" :not-after="disabledDates.from" format="MM-DD-YYYY[T]HH:mm:ss"></date-picker>
+			</div>
+			
+			<table id = "tableLatest" style="display:block">
+				<th>Location</th><th>Date</th><th>Type</th><th>Value</th><th>Unit</th>
+				<!--<tr class="trlabel" v-if="x.measurements[0].value <= 12" style="background: red">-->
+				<tr class="GetClass" v-for="x in tableData" v-if="x.measurements[0].value >= min && x.measurements[0].value <= max" @change="GetClass()">
+					<td>{{x.location+ ", " + x.coordinates.latitude + ", " + x.coordinates.longitude}}</td>
+					<td>{{x.measurements[0].lastUpdated}}</td>
+					<td>{{x.measurements[0].parameter}}</td>
+					<td :style="{ 'background-color': x.color }" >{{x.measurements[0].value}}</td>
+					<td>{{x.measurements[0].unit}}</td>
+				</tr>			
+			</table>
+			<table id = "tableHistory" style="display:none">
+				<th>Location</th><th>Date</th><th>Type</th><th>Value</th><th>Unit</th>
+				<tr v-for="x in tableData" v-if="x.value >= min && x.value <= max">
+					<td>{{x.location}}</td>
+					<td>{{x.date.utc}}</td>
+					<td>{{x.parameter}}</td>
+					<td :style="{'background-color': x.color}">{{x.value}}</td>
+					<td>{{x.unit}}</td>
+				</tr>
+			</table>
+		</div>
+		<!--<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>-->
 		
-		Latitude: <input type="text" name="lat" id="lat"/>
-		<br/>
-		Longitude: <input type="text" name="lng" id="lng"/>
-		<input type="button" onclick="zoomTo()" value="zoomTo"/>
-		<div id="mapid"></div>
-		<script src="javascripts/map.js"></script>
+		<script async defer
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZnh-iHB9U_H2RYHtK_l0sNH9tHzWLaNs&libraries=places,visualization&callback=initMap">
+		</script>
 	</body>
 </html>
