@@ -263,7 +263,7 @@ function updateHistoryMap(){
 
 
 function toggleHeatmap() {
-    heatmap.setMap(heatmap.getMap() ? null : map);
+    //heatmap.setMap(heatmap.getMap() ? null : map);
 }
 
 function setColorValue(param, value){
@@ -521,6 +521,7 @@ window.onload = function () {
 					parameter="&parameter="+this.particle;
 					hm.style.display='block';
 				}else{
+					parameter = "";
 					document.getElementById("legendImg").src = "legend/Capture.PNG";
 					hm.style.display='none';
 				}
